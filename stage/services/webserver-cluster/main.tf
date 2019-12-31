@@ -1,11 +1,11 @@
 terraform {
   backend "s3" {
     bucket = "slowteetoeterraformupandrunningstate"
-    key = "global/s3/terraform.tfstate"
+    key    = "global/s3/terraform.tfstate"
     region = "us-west-2"
 
     dynamodb_table = "terraform-up-and-running-locks"
-    encrypt= true
+    encrypt        = true
   }
 }
 
@@ -137,5 +137,15 @@ resource "aws_lb_target_group" "asg" {
     timeout             = 3
     healthy_threshold   = 2
     unhealthy_threshold = 2
+  }
+}
+
+data "terraform_remote_state" "db" {
+  backend = "s3"
+
+  config = {
+    bucket = "slowteetoeterraformupandrunningstate"
+    key    = "stage/data-stores/mysql/terraform.tfstate"
+    region = "us-west-2"
   }
 }
