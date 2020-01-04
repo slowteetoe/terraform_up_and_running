@@ -18,4 +18,4 @@ stage
     └── webserver-cluster
 ```
 
-pick up from p103
+Changing the `aws_launch_configuration` does NOT automatically de/provision the ASG nodes.  This seems like the safest behavior, but it does require the user to manually recycle the nodes. 

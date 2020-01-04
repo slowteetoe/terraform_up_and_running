@@ -21,17 +21,31 @@ data "aws_subnet_ids" "default" {
   vpc_id = data.aws_vpc.default.id
 }
 
+data "terraform_remote_state" "db" {
+  backend = "s3"
+
+  config = {
+    bucket = "slowteetoeterraformupandrunningstate"
+    key    = "stage/data-stores/mysql/terraform.tfstate"
+    region = "us-west-2"
+  }
+}
+
+data "template_file" "user_data" {
+  template = file("user-data.sh")
+
+  vars = {
+    server_port = var.server_port
+    db_address  = data.terraform_remote_state.db.outputs.address
+    db_port     = data.terraform_remote_state.db.outputs.port
+  }
+}
+
 resource "aws_launch_configuration" "example" {
   image_id        = "ami-06d51e91cea0dac8d"
   instance_type   = "t2.micro"
   security_groups = [aws_security_group.instance.id]
-
-  user_data = <<-EOF
-    #!/bin/bash
-    echo "hola mundo" > index.html
-    echo "${data.terraform_remote_state.db.outputs.address}:${data.terraform_remote_state.db.outputs.port}" >> index.html
-    nohup busybox httpd -f -p ${var.server_port} &
-    EOF
+  user_data       = data.template_file.user_data.rendered
 
   # Required when using a launch configuration with an ASG. https://www.terraform.io/docs/providers/aws/r/launch_configuration.html
   lifecycle {
@@ -53,12 +67,10 @@ resource "aws_security_group" "instance" {
 resource "aws_autoscaling_group" "example" {
   launch_configuration = aws_launch_configuration.example.name
   vpc_zone_identifier  = data.aws_subnet_ids.default.ids
-
-  target_group_arns = [aws_lb_target_group.asg.arn]
-  health_check_type = "ELB"
-
-  min_size = 2
-  max_size = 5
+  target_group_arns    = [aws_lb_target_group.asg.arn]
+  health_check_type    = "ELB"
+  min_size             = 2
+  max_size             = 5
 
   tag {
     key                 = "Name"
@@ -95,8 +107,9 @@ resource "aws_lb_listener_rule" "asg" {
   priority     = 100
 
   condition {
-    field  = "path-pattern"
-    values = ["*"]
+    path_pattern {
+      values = ["*"]
+    }
   }
 
   action {
@@ -138,15 +151,5 @@ resource "aws_lb_target_group" "asg" {
     timeout             = 3
     healthy_threshold   = 2
     unhealthy_threshold = 2
-  }
-}
-
-data "terraform_remote_state" "db" {
-  backend = "s3"
-
-  config = {
-    bucket = "slowteetoeterraformupandrunningstate"
-    key    = "stage/data-stores/mysql/terraform.tfstate"
-    region = "us-west-2"
   }
 }
