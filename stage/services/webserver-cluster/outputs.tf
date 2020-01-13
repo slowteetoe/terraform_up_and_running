@@ -1,4 +1,4 @@
-output "alb_dns_name" {
-  value       = aws_lb.example.dns_name
+output "load_balancer_url" {
+  value       = module.webserver_cluster.alb_dns_name
   description = "domain name of the load balancer"
 }

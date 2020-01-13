@@ -3,8 +3,8 @@
 cat > index.html <<EOF
 <html>
 <body>
-<h1>hola, mundo!</h1>
-<p>DB address: ${db_address}:${db_port}</p>
+<h1>hola, mundo! Now, using modules!</h1>
+<p>DB address: ${db_host}:${db_port}</p>
 </body>
 </html>
 EOF
