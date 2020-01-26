@@ -14,5 +14,5 @@ terraform {
 }
 
 module "db_module" {
-  source = "github.com/slowteetoe/terraform_up_and_running_modules//data-stores/mysql?ref=v0.0.1"
+  source = "github.com/slowteetoe/terraform_up_and_running_modules//data-stores/mysql?ref=v0.0.2"
 }
