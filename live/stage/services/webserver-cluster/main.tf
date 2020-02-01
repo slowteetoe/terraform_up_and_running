@@ -14,7 +14,7 @@ terraform {
 }
 
 module "webserver_cluster" {
-  source       = "github.com/slowteetoe/terraform_up_and_running_modules//services/webserver-cluster?ref=v0.0.2"
+  source       = "github.com/slowteetoe/terraform_up_and_running_modules//services/webserver-cluster?ref=v0.0.3"
   cluster_name = "webservers-stage"
 
   instance_type = "t2.micro"
@@ -22,6 +22,11 @@ module "webserver_cluster" {
   max_size      = 4
   db_host       = data.terraform_remote_state.db.outputs.db_host
   db_port       = data.terraform_remote_state.db.outputs.db_port
+
+  custom_tags = {
+    Owner      = "me"
+    DeployedBy = "terraform"
+  }
 }
 
 # pointless rule, just to show that we can now attach security rules
