@@ -14,7 +14,7 @@ terraform {
 }
 
 module "webserver_cluster" {
-  source       = "github.com/slowteetoe/terraform_up_and_running_modules//services/webserver-cluster?ref=v0.0.4"
+  source       = "github.com/slowteetoe/terraform_up_and_running_modules//services/webserver-cluster?ref=v0.0.5"
   cluster_name = "webservers-stage"
 
   instance_type      = "t2.micro"
