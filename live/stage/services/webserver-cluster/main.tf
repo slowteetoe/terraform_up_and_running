@@ -14,14 +14,15 @@ terraform {
 }
 
 module "webserver_cluster" {
-  source       = "github.com/slowteetoe/terraform_up_and_running_modules//services/webserver-cluster?ref=v0.0.3"
+  source       = "github.com/slowteetoe/terraform_up_and_running_modules//services/webserver-cluster?ref=v0.0.4"
   cluster_name = "webservers-stage"
 
-  instance_type = "t2.micro"
-  min_size      = 2
-  max_size      = 4
-  db_host       = data.terraform_remote_state.db.outputs.db_host
-  db_port       = data.terraform_remote_state.db.outputs.db_port
+  instance_type      = "t2.micro"
+  min_size           = 2
+  max_size           = 4
+  db_host            = data.terraform_remote_state.db.outputs.db_host
+  db_port            = data.terraform_remote_state.db.outputs.db_port
+  enable_autoscaling = false
 
   custom_tags = {
     Owner      = "me"
