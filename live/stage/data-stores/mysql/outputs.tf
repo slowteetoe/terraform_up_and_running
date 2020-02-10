@@ -1,9 +1,9 @@
-output "db_host" {
-  value       = module.db_module.address
+output "address" {
+  value       = aws_db_instance.example.address
   description = "connection address for database"
 }
 
-output "db_port" {
-  value       = module.db_module.port
+output "port" {
+  value       = aws_db_instance.example.port
   description = "listening port for database"
 }
